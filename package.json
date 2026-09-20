@@ -25,7 +25,8 @@
     "inventory:tag": "tsx src/scripts/inventory-tag.ts",
     "inventory:journey": "tsx src/scripts/inventory-journey.ts",
     "test": "vitest run",
-    "lint": "eslint src && tsc"
+    "lint": "eslint src && tsc",
+    "check:versions": "node scripts/check-version-consistency.mjs"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.899.0",
