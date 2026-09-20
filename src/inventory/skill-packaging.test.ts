@@ -69,7 +69,7 @@ describe("poppy-shorts plugin packaging", () => {
     expect(journey).toMatch(/GIF/i);
     expect(journey).toContain("contentSources");
     expect(journey.toLowerCase()).toContain("do **not** vendor unity showme");
-    expect(journey).toContain("playwright");
+    expect(journey.toLowerCase()).toContain("playwright");
     expect(journey).toContain("No journey to capture");
   });
 
