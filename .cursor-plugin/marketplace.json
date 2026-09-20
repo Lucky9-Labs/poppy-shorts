@@ -4,13 +4,13 @@
     "name": "Lucky9 Labs"
   },
   "metadata": {
-    "description": "Installable Cursor skill for tagging poppy-shorts clip inventory."
+    "description": "Installable Cursor plugin for the poppy-shorts content-capture loop."
   },
   "plugins": [
     {
       "name": "poppy-shorts",
       "source": ".",
-      "description": "tag-poppy-clips skill plus inventory CLIs in this repo"
+      "description": "poppy-journey, poppy-preserve-content, and tag-poppy-clips plus inventory CLIs"
     }
   ]
 }

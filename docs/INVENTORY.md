@@ -7,7 +7,7 @@ When poppy-shorts lists dynamic S3 `contentSources`, it also keeps a **durable i
 | Field | Meaning |
 | --- | --- |
 | `id` | Stable slug of `s3Uri` (survives re-ingest) |
-| `s3Uri` | `s3://bucket/key` |
+| `s3Uri` | Identity URI: `s3://bucket/key` or `file:relative/path` for local journey stubs |
 | `sourcePrefix` | The `contentSources` folder it came from |
 | `mediaType` | `video` / `image` / `audio` |
 | `nature` | Suggested buckets: `gameplay`, `wip`, `bug`, `mech-flex`, `horror`, `absurd`, `hangar`, `ui`, `concept-art`, `b-roll` |
@@ -38,6 +38,9 @@ npm run inventory:tag -- lucky9-clips-gameplay-flex-mp4 \
 # JSON patch (agents / editor scripts)
 npm run inventory:tag -- --id lucky9-clips-gameplay-flex-mp4 \
   --json '{"visualRichness":5,"engagement":4,"nature":["mech-flex"],"notes":"hook"}'
+
+# Journey package (local GIF/stills or publishedPrefix)
+npm run inventory:journey -- ./journeys/loadout.json
 ```
 
 Without AWS credentials, `inventory:sync` keeps the on-disk file and does not invent a listing.
@@ -62,11 +65,11 @@ Untagged clips score `0`, so a 5/5 mech-flex beat is chosen before muddy untagge
 
 ## How agents tag
 
-- Install and run the **`tag-poppy-clips`** skill. Copy `skills/tag-poppy-clips` into the consumer repo, or install the thin Cursor plugin from this GitHub URL. See [`docs/INSTALL-SKILL.md`](./INSTALL-SKILL.md).
+- Install the poppy-shorts **plugin** on the consumer repo. See [`docs/INSTALL-PLUGIN.md`](./INSTALL-PLUGIN.md).
+- After a visual feature ships, run **`/poppy-journey`** so stubs exist (`inventory:journey`). After merge / sendit, run **`/poppy-preserve-content`**. Score with **`/tag-poppy-clips`**.
 - Do not invent scores you have not seen. If you cannot open the media, leave scores empty and set `notes` to what the filename / prefix suggests (`wip`, `hangar`, …).
 - Prefer `npm run inventory:tag` over hand-editing JSON so `taggedAt` is set.
-- After a coding session that produced new captures or exports, invoke `/tag-poppy-clips` (or ask the agent to run that skill) and stop for the operator to confirm scores.
 
 ## After work finishes
 
-Cursor / Codex projects should invoke the installed skill, not a merge bot. The skill syncs stubs, prompts the human, then calls `inventory:sync` + `inventory:tag`. A copy-paste fallback prompt lives at [`docs/hooks/post-work-tag-clips.md`](./hooks/post-work-tag-clips.md) if the agent cannot load skills.
+The consumer agent follows the installed plugin skills. Journey proof → optional preserve prompt → human scores. A copy-paste fallback lives at [`docs/hooks/post-work-tag-clips.md`](./hooks/post-work-tag-clips.md) if the agent cannot load skills.

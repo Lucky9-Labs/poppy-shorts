@@ -20,7 +20,9 @@ The example Short renders from generated color plates. You do not need gameplay 
 | `public/footage/` | Drop cleared clips/stills (no private assets). |
 | `contentSources` | Dynamic list of `s3://bucket/prefix/` folders to catalog. |
 | `src/story/` | Ingest → transcribe → select → optional Fish VO → Remotion assemble. |
-| `skills/tag-poppy-clips` | Installable Cursor / Codex skill: sync inventory, then ask a human for tags. |
+| `skills/poppy-journey` | Start→finish visual proof (host ShowMe / Playwright); journey JSON + inventory stubs. |
+| `skills/poppy-preserve-content` | After merge / sendit: “Preserve this work for content?” |
+| `skills/tag-poppy-clips` | Sync inventory, then ask a human for nature + richness / engagement. |
 
 A beat is one hard cut: a plate (placeholder / image / video), an optional caption, and optional SFX cues with timestamps.
 
@@ -47,6 +49,7 @@ Node 20+ is required. First render downloads a headless browser if needed.
 | `npm run catalog` | List S3 prefixes → `public/content-catalog.json` |
 | `npm run story` | Offline storytelling dry-run → `public/story-short.json` |
 | `npm run inventory:sync` | Upsert S3 clip stubs in `inventory/clips.json` (tags persist) |
+| `npm run inventory:journey` | Upsert a journey package (local GIF / stills or published prefix) |
 | `npm run inventory:tag` | Patch richness / engagement / nature on one clip |
 | `npm run lint` | ESLint + `tsc` |
 
@@ -130,7 +133,9 @@ ingest (S3 prefixes) → transcribe (Whisper/offline) → select beats
 
 ## Clip inventory
 
-Editors and agents tag each S3 object’s **nature** and **engagement** in [`inventory/clips.json`](./inventory/clips.json). Sync upserts stubs; it never wipes scores. The story selector prefers `visualRichness + engagement + 0.5 * hookPotential`. Full guide: [`docs/INVENTORY.md`](./docs/INVENTORY.md). After a session that exported captures, invoke the installable **`tag-poppy-clips`** skill (`/tag-poppy-clips`) — see [`docs/INSTALL-SKILL.md`](./docs/INSTALL-SKILL.md).
+Editors and agents tag each object’s **nature** and **engagement** in [`inventory/clips.json`](./inventory/clips.json). Sync / journey upsert stubs; they never wipe scores. The story selector prefers `visualRichness + engagement + 0.5 * hookPotential`. Full guide: [`docs/INVENTORY.md`](./docs/INVENTORY.md).
+
+After you **install the plugin** on a consumer repo, finishing a feature is: **show the journey** (`/poppy-journey`) → optional **preserve for Shorts** (`/poppy-preserve-content`) → **tag** (`/tag-poppy-clips`). See [`docs/INSTALL-PLUGIN.md`](./docs/INSTALL-PLUGIN.md) (alias: [`docs/INSTALL-SKILL.md`](./docs/INSTALL-SKILL.md)).
 
 That is how Hullscape (and later other channels) can move from hand-authored beats to “drop a week of captures in S3 + a voice id → cut a Short,” while this repo stays MIT and secret-free.
 
@@ -170,7 +175,7 @@ Use this repo when the job is **“cut and post a Hullscape Short”**, not when
 
 Lucky9 Labs agents should treat `poppy-shorts` as the shared render library and Hullscape as the first channel that calls it. Do **not** copy Restart (or other product) voice/Whisper files into this repo — implement `VoiceProvider` / `Transcriber` adapters here instead. See [`docs/STORYTELLING.md`](./docs/STORYTELLING.md).
 
-After a session that exported captures, GIFs, or videos, invoke **`/tag-poppy-clips`**. Copy the skill into a consumer repo or install the thin Cursor plugin from this GitHub URL — [`docs/INSTALL-SKILL.md`](./docs/INSTALL-SKILL.md). Tagging is the skill + `inventory:sync` / `inventory:tag` + a human who watched the clip.
+Install the plugin on the **consumer** repo ([`docs/INSTALL-PLUGIN.md`](./docs/INSTALL-PLUGIN.md)). After a feature ships: `/poppy-journey` (host ShowMe / Playwright — do not vendor a Unity recorder) → `/poppy-preserve-content` (“Preserve this work for content?”) → `/tag-poppy-clips`. Tagging is those skills + `inventory:journey` / `inventory:sync` / `inventory:tag` + a human who watched the clip.
 
 ## Project layout
 
@@ -180,10 +185,11 @@ src/inventory/     clip inventory merge, tag, rank
 src/story/         ingest / transcribe / select / Fish VO / assemble
 src/scripts/       `prep-content`, `run-story`, `inventory-*`
 inventory/clips.json
-skills/tag-poppy-clips   portable Cursor / Codex skill
+src/journey/       journey package, host ShowMe locator, preserve uses
+skills/            poppy-journey, poppy-preserve-content, tag-poppy-clips
 plugin.json              Agent Plugins manifest
 .cursor-plugin/          Cursor marketplace wrapper
-docs/INSTALL-SKILL.md    how consumers install the skill
+docs/INSTALL-PLUGIN.md   how consumers install the full plugin
 docs/INVENTORY.md
 src/components/    smash flash, caption pop, beat media, SFX + VO slots
 src/compositions/  PoppyShort (prop-driven)

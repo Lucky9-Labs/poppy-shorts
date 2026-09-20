@@ -22,6 +22,7 @@
     "story": "tsx src/scripts/run-story.ts",
     "inventory:sync": "tsx src/scripts/inventory-sync.ts",
     "inventory:tag": "tsx src/scripts/inventory-tag.ts",
+    "inventory:journey": "tsx src/scripts/inventory-journey.ts",
     "test": "vitest run",
     "lint": "eslint src && tsc"
   },

@@ -1,6 +1,6 @@
 # Session-end fallback: tag new captures
 
-Prefer the installable **`tag-poppy-clips`** skill ([`docs/INSTALL-SKILL.md`](../INSTALL-SKILL.md)). Use this prompt only when the agent cannot load skills. Do not embed API keys.
+Prefer the installable plugin ([`docs/INSTALL-PLUGIN.md`](../INSTALL-PLUGIN.md)): `/poppy-journey` → `/poppy-preserve-content` → `/tag-poppy-clips`. Use this prompt only when the agent cannot load skills. Do not embed API keys.
 
 ## When to run
 
@@ -9,7 +9,7 @@ After a session that **created, exported, uploaded, or moved** gameplay, WIP evi
 ## Prompt (copy)
 
 ```
-You just finished work that may have produced new visual clips. Follow skills/tag-poppy-clips/SKILL.md if it is installed; otherwise:
+You just finished work that may have produced new visual clips. Follow the poppy-shorts plugin skills if installed (poppy-journey, poppy-preserve-content, tag-poppy-clips); otherwise:
 
 1. List any new or changed media paths from this session (local exports and intended s3://bucket/prefix/key destinations).
 2. Run `npm run inventory:sync` with the relevant s3:// prefixes (or CONTENT_SOURCES). Do not wipe inventory/clips.json tags.

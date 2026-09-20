@@ -7,7 +7,7 @@ description: After shipping features that produced captures, ShowMe GIFs, or vid
 
 Portable skill for **any** consumer project that uses [poppy-shorts](https://github.com/Lucky9-Labs/poppy-shorts) as its Shorts pipeline. Hullscape is only an example channel.
 
-Tagging is this skill + the inventory CLIs + a human who watched the clip. Install notes: [`docs/INSTALL-SKILL.md`](../../docs/INSTALL-SKILL.md).
+Tagging is this skill + the inventory CLIs + a human who watched the clip. Prefer `/poppy-journey` first when the session just shipped a visual change, and `/poppy-preserve-content` after merge if the human has not already decided whether to keep it for Shorts. Install notes: [`docs/INSTALL-PLUGIN.md`](../../docs/INSTALL-PLUGIN.md).
 
 ## When to use
 
