@@ -23,6 +23,7 @@ The example Short renders from generated color plates. You do not need gameplay 
 | `skills/poppy-journey` | Start→finish visual proof (host ShowMe / Playwright); journey JSON + inventory stubs. |
 | `skills/poppy-preserve-content` | After merge / sendit: “Preserve this work for content?” |
 | `skills/tag-poppy-clips` | Sync inventory, then ask a human for nature + richness / engagement. |
+| `hooks/` + `scripts/preserve-gate.mjs` | Lifecycle mark + Stop nudge for “Preserve this work for content?” |
 
 A beat is one hard cut: a plate (placeholder / image / video), an optional caption, and optional SFX cues with timestamps.
 
@@ -175,7 +176,7 @@ Use this repo when the job is **“cut and post a Hullscape Short”**, not when
 
 Lucky9 Labs agents should treat `poppy-shorts` as the shared render library and Hullscape as the first channel that calls it. Do **not** copy Restart (or other product) voice/Whisper files into this repo — implement `VoiceProvider` / `Transcriber` adapters here instead. See [`docs/STORYTELLING.md`](./docs/STORYTELLING.md).
 
-Install the plugin on the **consumer** repo ([`docs/INSTALL-PLUGIN.md`](./docs/INSTALL-PLUGIN.md)). After a feature ships: `/poppy-journey` (host ShowMe / Playwright — do not vendor a Unity recorder) → `/poppy-preserve-content` (“Preserve this work for content?”) → `/tag-poppy-clips`. Tagging is those skills + `inventory:journey` / `inventory:sync` / `inventory:tag` + a human who watched the clip.
+Install the plugin on the **consumer** repo ([`docs/INSTALL-PLUGIN.md`](./docs/INSTALL-PLUGIN.md)). After a feature ships: `/poppy-journey` (host ShowMe / Playwright — do not vendor a Unity recorder) → `/poppy-preserve-content` (“Preserve this work for content?”) → `/tag-poppy-clips`. When the plugin hooks are trusted, Stop/stop does that preserve ask from capture signals (merge/sendit/export/journey) instead of a markdown reminder. Tagging is those skills + `inventory:journey` / `inventory:sync` / `inventory:tag` + a human who watched the clip.
 
 ## Project layout
 
@@ -188,7 +189,11 @@ inventory/clips.json
 src/journey/       journey package, host ShowMe locator, preserve uses
 skills/            poppy-journey, poppy-preserve-content, tag-poppy-clips
 plugin.json              Agent Plugins manifest
-.cursor-plugin/          Cursor marketplace wrapper
+.cursor-plugin/          Cursor marketplace wrapper + hooks pointer
+.claude-plugin/          Claude Code plugin manifest
+.codex-plugin/           Codex plugin manifest
+hooks/                   Cursor + Claude/Codex preserve-gate lifecycle
+scripts/preserve-gate.mjs  mark pending flag / Stop followup (no deps)
 docs/INSTALL-PLUGIN.md   how consumers install the full plugin
 docs/INVENTORY.md
 src/components/    smash flash, caption pop, beat media, SFX + VO slots

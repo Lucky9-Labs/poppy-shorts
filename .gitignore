@@ -23,6 +23,9 @@ Thumbs.db
 .idea/
 .vscode/
 
+# Local preserve-for-content gate flag (written by lifecycle hooks)
+.poppy/
+
 # Tests
 coverage/
 
