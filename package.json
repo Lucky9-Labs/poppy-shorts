@@ -1,6 +1,6 @@
 {
   "name": "poppy-shorts",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Open-source, project-configurable Remotion Shorts pipeline (smash cuts, caption pops, and SFX slots).",
   "repository": {
     "type": "git",

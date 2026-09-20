@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "poppy-shorts",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Content-capture loop for Shorts inventory: journey proof, post-ship preserve prompt, clip tagging, and a Stop-hook preserve gate.",
   "author": {
     "name": "Lucky9 Labs",
