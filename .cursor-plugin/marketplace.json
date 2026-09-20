@@ -9,7 +9,7 @@
   "plugins": [
     {
       "name": "poppy-shorts",
-      "version": "0.3.0",
+      "version": "0.2.1",
       "source": ".",
       "description": "poppy-journey, poppy-preserve-content, tag-poppy-clips, inventory CLIs, and preserve-gate hooks"
     }
