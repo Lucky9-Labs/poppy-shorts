@@ -11,6 +11,8 @@ This skill records **verified visual proof** of a real change (start → finish)
 
 ## When to use
 
+Before capturing, run `npm run --prefix <poppy-shorts> poppy:init` from the consumer repo if `.poppy/config.json` does not exist. This creates the project-owned config and local `content/`, `journeys/`, and `inventory/` folders. Do not require the operator to know this setup step; the agent should perform it automatically.
+
 Run after a feature **ships in the consuming project** and you can show the change:
 
 - A UI, hangar, gameplay, or tool flow that looks different than before

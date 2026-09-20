@@ -12,7 +12,7 @@ Inventory CLIs stay in this repo (`inventory:sync`, `inventory:journey`, `invent
 
 ## Connect a consumer project
 
-After installing the plugin, the consumer project owns its channel and media connection. Create `.poppy/config.json` in that project:
+After installing the plugin, the first `/poppy-journey` run should automatically initialize the consumer project. It creates `.poppy/config.json` plus local `content/`, `journeys/`, and `inventory/` directories. The agent may run `npm run --prefix <poppy-shorts> poppy:init` when needed. The consumer project owns its channel and media connection; cloud storage remains opt-in:
 
 ```json
 {
@@ -21,6 +21,8 @@ After installing the plugin, the consumer project owns its channel and media con
   "contentSources": ["s3://my-bucket/gameplay/", "s3://my-bucket/proof/"]
 }
 ```
+
+If no cloud source is configured, the plugin keeps captures local and continues working. Only ask the operator to choose an S3 prefix when they choose to publish or preserve content remotely; never invent a bucket.
 
 The package reads this file for catalog, inventory, and story commands. `CONTENT_SOURCES` and `AWS_REGION` remain supported as environment overrides. The config contains no secrets; credentials still come from the AWS default credential chain.
 
