@@ -1,5 +1,7 @@
 import {catalogItemsOfKind} from "../lib/content-catalog";
-import type {ContentCatalog} from "../lib/content-catalog";
+import type {CatalogItem, ContentCatalog} from "../lib/content-catalog";
+import type {ClipInventory} from "../inventory/schema";
+import {rankCatalogItems} from "../inventory/rank";
 import type {BeatSource} from "../lib/schema";
 import type {StoryBeat} from "./types";
 
@@ -27,9 +29,10 @@ export function beatDurationSeconds(line: string): number {
 export function selectStoryBeats(input: {
   lines: string[];
   catalog: ContentCatalog;
+  inventory?: ClipInventory;
 }): StoryBeat[] {
-  const videos = catalogItemsOfKind(input.catalog, "video");
-  const images = catalogItemsOfKind(input.catalog, "image");
+  const videos = rankCatalogItems(input.catalog.items, input.inventory, "video");
+  const images = rankCatalogItems(input.catalog.items, input.inventory, "image");
 
   return input.lines.map((line, index) => {
     const tone = index % 2 === 0 ? "serious" : "goofy";
@@ -38,14 +41,15 @@ export function selectStoryBeats(input: {
       line,
       tone,
       durationInSeconds: beatDurationSeconds(line),
-      source: pickSource(videos, images, index),
+      source: pickSource(videos, images, input.catalog, index),
     };
   });
 }
 
 function pickSource(
-  videos: ReturnType<typeof catalogItemsOfKind>,
-  images: ReturnType<typeof catalogItemsOfKind>,
+  videos: CatalogItem[],
+  images: CatalogItem[],
+  catalog: ContentCatalog,
   index: number,
 ): BeatSource {
   const video = videos[index];
@@ -57,7 +61,10 @@ function pickSource(
     return {type: "image", src: image.url};
   }
   if (video) {
-    return {type: "catalog", kind: "video", index, fallbackLabel: video.key};
+    const original = catalogItemsOfKind(catalog, "video").findIndex(
+      (item) => item.uri === video.uri,
+    );
+    return {type: "catalog", kind: "video", index: original, fallbackLabel: video.key};
   }
   const color = PLACEHOLDER_COLORS[index % PLACEHOLDER_COLORS.length] ?? "#0b0f14";
   return {type: "placeholder", color, label: `CLIP ${index + 1}`};

@@ -19,7 +19,7 @@ s3://bucket/prefix/       voice.provider = fish_audio
         ▼                        ▼
     [select] ──────────► [assemble] ──► PoppyShort
  transcript + catalog      beats + captions
-                           + DaniDev SFX slots
+ + inventory scores        + DaniDev SFX slots
                            + VO track
 ```
 
@@ -29,7 +29,7 @@ s3://bucket/prefix/       voice.provider = fish_audio
 | --- | --- | --- |
 | Ingest | `src/story/ingest.ts` | Empty catalog if no S3 lister / no prefixes |
 | Transcribe | `src/story/transcribe.ts` | Split `narration` locally (`offline`) |
-| Select | `src/story/select.ts` | Placeholder plates; alternate serious / goofy |
+| Select | `src/story/select.ts` | Placeholder plates; prefer inventory richness/engagement |
 | Voiceover | `src/story/voice/` | Skip when `provider` is `offline` or the key is missing |
 | Assemble | `src/story/assemble.ts` | Always produces `ShortProps` for Remotion |
 

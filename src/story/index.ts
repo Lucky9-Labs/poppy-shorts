@@ -7,6 +7,7 @@ export type {StoryConfig, VoiceConfig} from "./config";
 export {runStoryPipeline, offlineStoryDeps} from "./pipeline";
 export {assembleStoryShort} from "./assemble";
 export {selectStoryBeats, splitNarration} from "./select";
+export type {ClipInventory} from "../inventory/schema";
 export {ingestContentSources} from "./ingest";
 export {createOfflineTranscriber, createOpenAIWhisperTranscriber} from "./transcribe";
 export {createOfflineVoiceProvider} from "./voice/provider";

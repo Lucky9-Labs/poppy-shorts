@@ -10,6 +10,7 @@
 
 import {writeFile} from "node:fs/promises";
 import path from "node:path";
+import {loadInventory} from "../inventory/persist";
 import {contentSourcesFromEnv} from "../lib/content-sources";
 import {parseStoryConfig, storyConfigFromEnv} from "../story/config";
 import {runStoryPipeline} from "../story/pipeline";
@@ -30,7 +31,10 @@ async function main(): Promise<void> {
     transcribe: envVoice.transcribe,
   });
 
-  const result = await runStoryPipeline({config});
+  const result = await runStoryPipeline({
+    config,
+    inventory: await loadInventory(),
+  });
   await writeFile(OUTPUT, `${JSON.stringify(result.short, null, 2)}\n`, "utf8");
   console.log(
     `Wrote ${result.short.beats.length} beats to ${OUTPUT}` +

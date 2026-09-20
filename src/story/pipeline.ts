@@ -1,5 +1,6 @@
 import {emptyContentCatalog} from "../lib/content-catalog";
 import type {ContentCatalog} from "../lib/content-catalog";
+import type {ClipInventory} from "../inventory/schema";
 import type {S3ListClient} from "../lib/list-s3-content";
 import {assembleStoryShort} from "./assemble";
 import type {StoryConfig} from "./config";
@@ -14,6 +15,7 @@ export type StoryPipelineDeps = {
   transcriber?: Transcriber;
   voice?: VoiceProvider;
   catalog?: ContentCatalog;
+  inventory?: ClipInventory;
   writeVoiceover?: (result: VoiceoverResult) => Promise<string>;
 };
 
@@ -24,6 +26,7 @@ export type StoryPipelineDeps = {
 export async function runStoryPipeline(input: {
   config: StoryConfig;
   catalog?: ContentCatalog;
+  inventory?: ClipInventory;
   lister?: S3ListClient;
   transcriber?: Transcriber;
   voice?: VoiceProvider;
@@ -36,7 +39,11 @@ export async function runStoryPipeline(input: {
   });
   const transcript = await loadTranscript(input.config, input.transcriber);
   const lines = linesFromTranscript(transcript, input.config.narration);
-  const beats = selectStoryBeats({lines, catalog: ingested.catalog});
+  const beats = selectStoryBeats({
+    lines,
+    catalog: ingested.catalog,
+    inventory: input.inventory,
+  });
   const voiceover = await maybeVoiceover(input, lines.join(". "));
 
   return {

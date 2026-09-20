@@ -41,6 +41,65 @@ describe("selectStoryBeats", () => {
     expect(beats[1]?.source.type).toBe("placeholder");
   });
 
+  it("prefers higher richness/engagement clips when inventory is present", () => {
+    const twoClips: ContentCatalog = {
+      sources: ["s3://lucky9-clips/gameplay/"],
+      items: [
+        {
+          uri: "s3://lucky9-clips/gameplay/mud.mp4",
+          bucket: "lucky9-clips",
+          key: "gameplay/mud.mp4",
+          kind: "video",
+          sourcePrefix: "s3://lucky9-clips/gameplay/",
+          url: "https://cdn.example/mud.mp4",
+        },
+        {
+          uri: "s3://lucky9-clips/gameplay/flex.mp4",
+          bucket: "lucky9-clips",
+          key: "gameplay/flex.mp4",
+          kind: "video",
+          sourcePrefix: "s3://lucky9-clips/gameplay/",
+          url: "https://cdn.example/flex.mp4",
+        },
+      ],
+    };
+    const beats = selectStoryBeats({
+      lines: ["HOOK"],
+      catalog: twoClips,
+      inventory: {
+        version: 1,
+        clips: [
+          {
+            id: "mud",
+            s3Uri: "s3://lucky9-clips/gameplay/mud.mp4",
+            sourcePrefix: "s3://lucky9-clips/gameplay/",
+            mediaType: "video",
+            nature: [],
+            tags: [],
+            visualRichness: 1,
+            engagement: 1,
+            usedInShorts: [],
+          },
+          {
+            id: "flex",
+            s3Uri: "s3://lucky9-clips/gameplay/flex.mp4",
+            sourcePrefix: "s3://lucky9-clips/gameplay/",
+            mediaType: "video",
+            nature: ["mech-flex"],
+            tags: [],
+            visualRichness: 5,
+            engagement: 5,
+            usedInShorts: [],
+          },
+        ],
+      },
+    });
+    expect(beats[0]?.source).toEqual({
+      type: "video",
+      src: "https://cdn.example/flex.mp4",
+    });
+  });
+
   it("uses placeholders when the catalog is empty (offline)", () => {
     const beats = selectStoryBeats({
       lines: ["Hook line"],

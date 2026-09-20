@@ -20,6 +20,8 @@
     "still:example": "remotion still ExampleShort out/example-preview.png --frame=36",
     "catalog": "tsx src/scripts/prep-content.ts",
     "story": "tsx src/scripts/run-story.ts",
+    "inventory:sync": "tsx src/scripts/inventory-sync.ts",
+    "inventory:tag": "tsx src/scripts/inventory-tag.ts",
     "test": "vitest run",
     "lint": "eslint src && tsc"
   },

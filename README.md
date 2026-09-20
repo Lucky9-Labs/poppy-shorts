@@ -45,6 +45,8 @@ Node 20+ is required. First render downloads a headless browser if needed.
 | `npm test` | Timeline / schema / SFX unit tests |
 | `npm run catalog` | List S3 prefixes → `public/content-catalog.json` |
 | `npm run story` | Offline storytelling dry-run → `public/story-short.json` |
+| `npm run inventory:sync` | Upsert S3 clip stubs in `inventory/clips.json` (tags persist) |
+| `npm run inventory:tag` | Patch richness / engagement / nature on one clip |
 | `npm run lint` | ESLint + `tsc` |
 
 ## How to add a Short
@@ -125,6 +127,10 @@ ingest (S3 prefixes) → transcribe (Whisper/offline) → select beats
 
 `voice.provider` is `fish_audio` or `offline`. The Fish adapter calls the [public TTS API](https://docs.fish.audio) (`POST /v1/tts` + `reference_id`). Keys stay in `FISH_AUDIO_API_KEY` — never in git. Without AWS or Fish, `npm run story` still writes a placeholder Short plan; `ExampleShort` still renders.
 
+## Clip inventory
+
+Editors and agents tag each S3 object’s **nature** and **engagement** in [`inventory/clips.json`](./inventory/clips.json). Sync upserts stubs; it never wipes scores. The story selector prefers `visualRichness + engagement + 0.5 * hookPotential`. Full guide: [`docs/INVENTORY.md`](./docs/INVENTORY.md). After a session that exported captures, run the [post-work tag hook](./docs/hooks/post-work-tag-clips.md).
+
 That is how Hullscape (and later other channels) can move from hand-authored beats to “drop a week of captures in S3 + a voice id → cut a Short,” while this repo stays MIT and secret-free.
 
 ### AWS auth (no secrets in this repo)
@@ -161,14 +167,18 @@ Use this repo when the job is **“cut and post a Hullscape Short”**, not when
 7. If you only have stills, use `type: "image"`. If you have a clip, `type: "video"` with `object-fit: cover`.
 8. Caption copy: first three words are the hook. All-caps for serious; the goofy line can stay conversational.
 
-Lucky9 Labs agents should treat `poppy-shorts` as the shared render library and Hullscape as the first channel that calls it. Do **not** copy Restart (or other product) voice/Whisper files into this repo — implement `VoiceProvider` / `Transcriber` adapters here instead. See [`docs/STORYTELLING.md`](./docs/STORYTELLING.md).
+Lucky9 Labs agents should treat `poppy-shorts` as the shared render library and Hullscape as the first channel that calls it. Do **not** copy Restart (or other product) voice/Whisper files into this repo — implement `VoiceProvider` / `Transcriber` adapters here instead. See [`docs/STORYTELLING.md`](./docs/STORYTELLING.md). After a session that exported captures, follow [`docs/hooks/post-work-tag-clips.md`](./docs/hooks/post-work-tag-clips.md) so new S3 objects get nature + engagement tags.
 
 ## Project layout
 
 ```
 src/lib/           timeline, schema, SFX matching, S3 catalog, metadata
+src/inventory/     clip inventory merge, tag, rank
 src/story/         ingest / transcribe / select / Fish VO / assemble
-src/scripts/       `prep-content`, `run-story`
+src/scripts/       `prep-content`, `run-story`, `inventory-*`
+inventory/clips.json
+docs/INVENTORY.md
+docs/hooks/        post-work tag template (Codex / Cursor)
 src/components/    smash flash, caption pop, beat media, SFX + VO slots
 src/compositions/  PoppyShort (prop-driven)
 src/shorts/        example beat list (Hullscape)
