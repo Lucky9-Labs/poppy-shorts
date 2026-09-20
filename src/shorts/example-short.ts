@@ -4,9 +4,11 @@ import type {ShortProps} from "../lib/schema";
  * Hullscape channel example: serious mech-game energy cut against a goofy
  * process. Renders with generated color panels — no gameplay assets required.
  * Drop files into `sfx/whoosh` and `sfx/impact` to hear the audio slots.
+ * `contentSources` is empty so this demo never requires AWS.
  */
 export const exampleShortProps: ShortProps = {
   title: "Hullscape — mech vs process",
+  contentSources: [],
   beats: [
     {
       id: "forge",

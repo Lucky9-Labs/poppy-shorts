@@ -22,11 +22,24 @@ const VideoSourceSchema = z.object({
   volume: z.number().min(0).max(1).optional(),
 });
 
+/**
+ * Pulls the Nth image/video from the merged S3 catalog.
+ * Falls back to a generated plate when the catalog is empty (offline).
+ */
+export const CatalogBeatSourceSchema = z.object({
+  type: z.literal("catalog"),
+  kind: z.enum(["image", "video", "audio"]),
+  index: z.number().int().nonnegative(),
+  fallbackColor: z.string().optional(),
+  fallbackLabel: z.string().optional(),
+});
+
 /** Visual source for one smash-cut beat. Placeholders need no media files. */
 export const BeatSourceSchema = z.discriminatedUnion("type", [
   PlaceholderSourceSchema,
   ImageSourceSchema,
   VideoSourceSchema,
+  CatalogBeatSourceSchema,
 ]);
 
 /** On-screen caption that pops after the cut (serious vs goofy tone). */
@@ -53,13 +66,32 @@ export const BeatSchema = z.object({
   sfx: z.array(SfxCueSchema).optional(),
 });
 
+export const CatalogItemSchema = z.object({
+  uri: z.string().min(1),
+  bucket: z.string().min(1),
+  key: z.string().min(1),
+  kind: z.enum(["image", "video", "audio"]),
+  sourcePrefix: z.string().min(1),
+  sizeBytes: z.number().nonnegative().optional(),
+  url: z.string().optional(),
+});
+
+/** Merged listing of every `contentSources` prefix for this render. */
+export const ContentCatalogSchema = z.object({
+  sources: z.array(z.string()),
+  items: z.array(CatalogItemSchema),
+});
+
 /** Top-level props for the reusable PoppyShort composition. */
 export const ShortPropsSchema = z.object({
   title: z.string().min(1),
   beats: z.array(BeatSchema).min(1),
+  contentSources: z.array(z.string()).default([]),
+  catalog: ContentCatalogSchema.optional(),
 });
 
 export type BeatSource = z.infer<typeof BeatSourceSchema>;
+export type CatalogBeatSource = z.infer<typeof CatalogBeatSourceSchema>;
 export type Caption = z.infer<typeof CaptionSchema>;
 export type SfxCue = z.infer<typeof SfxCueSchema>;
 export type Beat = z.infer<typeof BeatSchema>;

@@ -18,10 +18,13 @@
     "render": "remotion render PoppyShort",
     "render:example": "remotion render ExampleShort out/example.mp4",
     "still:example": "remotion still ExampleShort out/example-preview.png --frame=36",
+    "catalog": "tsx src/scripts/prep-content.ts",
     "test": "vitest run",
     "lint": "eslint src && tsc"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.899.0",
+    "@aws-sdk/s3-request-presigner": "^3.899.0",
     "@remotion/cli": "4.0.526",
     "@remotion/google-fonts": "4.0.526",
     "@remotion/zod-types": "4.0.526",
@@ -32,10 +35,12 @@
   },
   "devDependencies": {
     "@remotion/eslint-config-flat": "4.0.526",
+    "@types/node": "^24.5.2",
     "@types/react": "19.2.7",
     "@types/web": "0.0.166",
     "eslint": "9.19.0",
     "prettier": "3.8.1",
+    "tsx": "^4.20.5",
     "typescript": "5.9.3",
     "vitest": "^3.2.4"
   },

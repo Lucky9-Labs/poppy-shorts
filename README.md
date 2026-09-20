@@ -18,6 +18,7 @@ The example Short renders from generated color plates. You do not need gameplay 
 | `ExampleShort` | Hullscape demo: smash cut + caption pop + whoosh/impact/comedy slots. |
 | `sfx/` | License notes + empty whoosh / impact / comedy folders. |
 | `public/footage/` | Drop cleared clips/stills (no private assets). |
+| `contentSources` | Dynamic list of `s3://bucket/prefix/` folders to catalog. |
 
 A beat is one hard cut: a plate (placeholder / image / video), an optional caption, and optional SFX cues with timestamps.
 
@@ -41,6 +42,7 @@ Node 20+ is required. First render downloads a headless browser if needed.
 | `npm run render` | Render `PoppyShort` (starter 2-beat Short) |
 | `npm run render:example` | Render the Hullscape `ExampleShort` to `out/example.mp4` |
 | `npm test` | Timeline / schema / SFX unit tests |
+| `npm run catalog` | List S3 prefixes → `public/content-catalog.json` |
 | `npm run lint` | ESLint + `tsc` |
 
 ## How to add a Short
@@ -76,6 +78,41 @@ Hook in the first 1–2 seconds. Most beats should be 0.8–2.0s. Stay under 60s
 
 Drop licensed audio in `sfx/whoosh`, `sfx/impact`, or `sfx/comedy`. See [`sfx/README.md`](./sfx/README.md) for Mixkit, Sonniss GDC, and bfxr. Missing files are skipped; the render still succeeds.
 
+## Dynamic S3 content sources
+
+The pipeline does **not** hardcode a bucket. Pass as many folder prefixes as you need for one Short (gameplay captures + WIP evidence + brand stills):
+
+```ts
+contentSources: [
+  "s3://your-bucket/gameplay/",
+  "s3://your-bucket/wip-evidence",
+  "s3://your-bucket/brand-stills/",
+]
+```
+
+Trailing slashes are optional. `src/lib/content-sources.ts` also reads `CONTENT_SOURCES` as a JSON array or a comma-separated list (see `.env.example`).
+
+```bash
+# list + merge every prefix into public/content-catalog.json
+npm run catalog -- s3://your-bucket/gameplay/ s3://your-bucket/wip-evidence/
+# optional HTTPS URLs for private objects (default credential chain)
+npm run catalog -- --presign s3://your-bucket/gameplay/
+```
+
+`calculateShortMetadata` attaches that JSON to composition props when present. Beats can use `{type: "catalog", kind: "video", index: 0}` and fall back to a color plate if the catalog is empty — **`ExampleShort` stays offline** with placeholders when S3 is not configured.
+
+Do not import `src/lib/s3-client.ts` from Remotion compositions (AWS SDK / Node only). Compositions consume the catalog; the prep script lists S3.
+
+### AWS auth (no secrets in this repo)
+
+The prep script uses the **AWS default credential chain**:
+
+1. Environment (`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, optional `AWS_SESSION_TOKEN`)
+2. `AWS_PROFILE` / `~/.aws/credentials` / AWS SSO
+3. Task / instance role when running on AWS
+
+Copy `.env.example` to `.env` for `AWS_REGION` and `CONTENT_SOURCES` only. **Never commit `.env` or access keys.** IAM needs `s3:ListBucket` on each bucket (prefix-scoped if you can) and `s3:GetObject` if you `--presign`. `public/content-catalog.json` is gitignored because presigned URLs expire and can leak object paths.
+
 ## How to render
 
 ```bash
@@ -93,7 +130,7 @@ Use this repo when the job is **“cut and post a Hullscape Short”**, not when
 
 1. **Do not** add private mech-game assets, unreleased builds, API keys, or `.env` secrets.
 2. Start from `ExampleShort` / `src/shorts/example-short.ts`. Keep smash cuts and the serious/goofy flip.
-3. Author beats as data. Prefer placeholders until a clip is public-cleared, then point `source.src` at `footage/...`.
+3. Author beats as data. Prefer placeholders until a clip is public-cleared, then point `source.src` at `footage/...` or run `npm run catalog` with `contentSources` and `{type: "catalog", ...}`.
 4. Put SFX only in `sfx/<category>/` with a license you can defend on a monetized YouTube channel. Leave binaries uncommitted.
 5. Run `npm test` after changing timeline or schema helpers. Run `npm run render:example` (or `npx remotion still`) before you claim a Short is ready.
 6. Composition ids: `PoppyShort` (blank pipeline) and `ExampleShort` (Hullscape demo). New posts get a new id + beat list.
@@ -105,7 +142,8 @@ Lucky9 Labs agents should treat `poppy-shorts` as the shared render library and 
 ## Project layout
 
 ```
-src/lib/           timeline, schema, SFX matching, metadata
+src/lib/           timeline, schema, SFX matching, S3 catalog, metadata
+src/scripts/       `prep-content` — list S3 prefixes (Node / AWS SDK)
 src/components/    smash flash, caption pop, beat media, SFX slots
 src/compositions/  PoppyShort (prop-driven)
 src/shorts/        example beat list (Hullscape)

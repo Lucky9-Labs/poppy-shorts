@@ -24,6 +24,7 @@ export const RemotionRoot: React.FC = () => {
           durationInFrames={90}
           defaultProps={{
             title: "New Short",
+            contentSources: [],
             beats: [
               {
                 id: "hook",
@@ -35,7 +36,13 @@ export const RemotionRoot: React.FC = () => {
               {
                 id: "turn",
                 durationInSeconds: 1.8,
-                source: {type: "placeholder", color: "#2a1840", label: "TURN"},
+                source: {
+                  type: "catalog",
+                  kind: "video",
+                  index: 0,
+                  fallbackColor: "#2a1840",
+                  fallbackLabel: "TURN",
+                },
                 caption: {text: "the goofy turn", tone: "goofy", delaySeconds: 0.08},
                 sfx: [{src: "impact/hit-01.wav", atSeconds: 0.08, kind: "impact"}],
               },
@@ -55,6 +62,7 @@ export const RemotionRoot: React.FC = () => {
           durationInFrames={228}
           defaultProps={{
             title: "Hullscape — mech vs process",
+            contentSources: [],
             beats: [
               {
                 id: "forge",

@@ -21,6 +21,27 @@ describe("ShortPropsSchema", () => {
 
     expect(parsed.beats).toHaveLength(1);
     expect(parsed.beats[0]?.caption?.tone).toBe("serious");
+    expect(parsed.contentSources).toEqual([]);
+  });
+
+  it("accepts a dynamic list of S3 folder prefixes", () => {
+    const parsed = ShortPropsSchema.parse({
+      title: "From S3",
+      contentSources: [
+        "s3://lucky9-clips/gameplay/",
+        "s3://lucky9-clips/wip-evidence",
+      ],
+      beats: [
+        {
+          id: "a",
+          durationInSeconds: 1,
+          source: {type: "catalog", kind: "video", index: 0},
+        },
+      ],
+    });
+
+    expect(parsed.contentSources).toHaveLength(2);
+    expect(parsed.beats[0]?.source.type).toBe("catalog");
   });
 
   it("rejects a beat with no duration", () => {
@@ -47,6 +68,7 @@ describe("exampleShortProps", () => {
 
     expect(seconds).toBeGreaterThan(4);
     expect(seconds).toBeLessThanOrEqual(YOUTUBE_SHORT_MAX_SECONDS);
+    expect(parsed.contentSources).toEqual([]);
   });
 
   it("demonstrates smash-cut juxtaposition plus SFX slots", () => {

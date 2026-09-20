@@ -11,6 +11,9 @@ out/
 .env.*
 !.env.example
 
+# Local S3 catalog may include presigned URLs — do not commit
+public/content-catalog.json
+
 # OS / editor
 .DS_Store
 Thumbs.db
