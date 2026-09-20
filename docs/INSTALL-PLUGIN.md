@@ -1,5 +1,7 @@
 # Install the poppy-shorts Cursor plugin
 
+**Version 0.3.0** adds the lifecycle preserve gate (mark on merge/sendit/export/journey shell, nudge `/poppy-preserve-content` on Stop). Future plugin ships bump semver with the change: patch for docs/fixes, minor for new hooks/skills/commands.
+
 The plugin owns the **content-capture loop** for any consumer project (Hullscape is only an example):
 
 ```

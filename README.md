@@ -10,6 +10,8 @@ Style target: **DaniDev / Megabonk viral energy** — smash cuts, whooshes, text
 
 The example Short renders from generated color plates. You do not need gameplay footage or SFX binaries to preview or export `ExampleShort`.
 
+**0.3.0** — installable preserve gate: Cursor / Claude Code / Codex hooks mark capture signals and ask “Preserve this work for content?” on Stop. Plugin manifests, `package.json`, and the Cursor marketplace entry share this version. Next ships: patch for docs/fixes, minor for new hooks/skills/commands.
+
 ## What you get
 
 | Piece | Role |

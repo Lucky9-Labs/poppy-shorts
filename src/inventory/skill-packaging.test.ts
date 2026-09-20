@@ -137,7 +137,16 @@ describe("poppy-shorts plugin packaging", () => {
     const market = JSON.parse(
       readRepoFile(".cursor-plugin/marketplace.json"),
     ) as {
-      plugins: Array<{name: string; source: string; description: string}>;
+      plugins: Array<{
+        name: string;
+        version?: string;
+        source: string;
+        description: string;
+      }>;
+    };
+    const npmPackage = JSON.parse(readRepoFile("package.json")) as {
+      name: string;
+      version?: string;
     };
 
     expect(agent.name).toBe("poppy-shorts");
@@ -157,8 +166,13 @@ describe("poppy-shorts plugin packaging", () => {
     expect(codex.name).toBe("poppy-shorts");
     expect(codex.version).toBe("0.3.0");
     expect(codex.hooks).toBe("./hooks/hooks.json");
+    expect(npmPackage.name).toBe("poppy-shorts");
+    expect(npmPackage.version).toBe("0.3.0");
     expect(market.plugins[0]?.source).toBe(".");
+    expect(market.plugins[0]?.version).toBe("0.3.0");
     expect(market.plugins[0]?.description).toContain("poppy-journey");
+    expect(readRepoFile("docs/INSTALL-PLUGIN.md")).toContain("0.3.0");
+    expect(readRepoFile("README.md")).toContain("0.3.0");
     expect(readRepoFile("hooks/hooks.json")).toContain("--stop-claude");
     expect(readRepoFile("hooks/cursor-hooks.json")).toContain("--stop-cursor");
     expect(readRepoFile("scripts/preserve-gate.mjs")).toContain("--mark");
