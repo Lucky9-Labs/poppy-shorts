@@ -1,0 +1,38 @@
+{
+  "description": "poppy-shorts: gate preserve-for-content on Stop when session produced capture signals",
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node",
+            "args": [
+              "${CLAUDE_PLUGIN_ROOT}/scripts/preserve-gate.mjs",
+              "--mark"
+            ],
+            "timeout": 15,
+            "statusMessage": "Checking for preservable media"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node",
+            "args": [
+              "${CLAUDE_PLUGIN_ROOT}/scripts/preserve-gate.mjs",
+              "--stop-claude"
+            ],
+            "timeout": 20,
+            "statusMessage": "Preserve-for-content gate"
+          }
+        ]
+      }
+    ]
+  }
+}

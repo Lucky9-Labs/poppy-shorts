@@ -1,5 +1,7 @@
 # Install the poppy-shorts Cursor plugin
 
+**Version 0.2.1** adds the lifecycle preserve gate (mark on merge/sendit/export/journey shell, nudge `/poppy-preserve-content` on Stop). Version as we go: **patch** (`0.2.x`) is the default for incremental ships (hooks, docs, fixes, small skills); **minor** (`0.x.0`) is only for a bigger feature cut or API-shape change. Do not leap a minor for a single incremental feature like this gate.
+
 The plugin owns the **content-capture loop** for any consumer project (Hullscape is only an example):
 
 ```
@@ -16,9 +18,12 @@ Inventory CLIs stay in this repo (`inventory:sync`, `inventory:journey`, `invent
 | [`skills/poppy-preserve-content/SKILL.md`](../skills/poppy-preserve-content/SKILL.md) | After merge / sendit: “Preserve this work for content?” If no, exit |
 | [`skills/tag-poppy-clips/SKILL.md`](../skills/tag-poppy-clips/SKILL.md) | Sync inventory; prompt for nature + 1–5 richness / engagement |
 | [`plugin.json`](../plugin.json) | Agent Plugins manifest (all three skills) |
-| [`.cursor-plugin/plugin.json`](../.cursor-plugin/plugin.json) | Cursor Plugin wrapper (`skills/` + `commands/`) |
+| [`.cursor-plugin/plugin.json`](../.cursor-plugin/plugin.json) | Cursor Plugin wrapper (`skills/` + `commands/` + hooks) |
+| [`.claude-plugin/plugin.json`](../.claude-plugin/plugin.json) | Claude Code plugin wrapper (`hooks/hooks.json`) |
+| [`.codex-plugin/plugin.json`](../.codex-plugin/plugin.json) | Codex plugin wrapper (`hooks/hooks.json`) |
 | [`.cursor-plugin/marketplace.json`](../.cursor-plugin/marketplace.json) | Import this GitHub repo as a marketplace |
 | [`commands/`](../commands/) | `/poppy-journey`, `/poppy-preserve-content`, `/tag-poppy-clips` |
+| [`hooks/`](../hooks/) | Lifecycle preserve gate (mark on shell, nudge on Stop) |
 
 ## Option A — copy skill folders (any agent)
 
@@ -110,3 +115,35 @@ If none exist, the journey skill asks the human for a GIF or stills.
 ## Hullscape example
 
 A hangar lighting PR merges in the game repo (plugin installed there). The agent runs `/poppy-journey` through the game's ShowMe skill, writes `journeys/hangar-light.gif`, upserts stubs, then `/poppy-preserve-content`. The operator picks `hangar-process`, scores 4 / 3, and `/tag-poppy-clips` patches `inventory/clips.json` in the poppy-shorts checkout.
+
+## Hooks
+
+The plugin ships an installable **preserve gate** so Cursor, Claude Code, and Codex can ask “Preserve this work for content?” from **lifecycle signals**, not from a markdown reminder.
+
+| Host | Config | Mark | Stop |
+| --- | --- | --- | --- |
+| Cursor | [`hooks/cursor-hooks.json`](../hooks/cursor-hooks.json) via `.cursor-plugin/plugin.json` | `afterShellExecution` → `preserve-gate.mjs --mark` | `stop` (`loop_limit: 1`) → `--stop-cursor` |
+| Claude Code | [`hooks/hooks.json`](../hooks/hooks.json) via `.claude-plugin/plugin.json` | `PostToolUse` matcher `Bash` → `--mark` | `Stop` → `--stop-claude` |
+| Codex | Same `hooks/hooks.json` via `.codex-plugin/plugin.json` | `PostToolUse` matcher `Bash` (Codex shell alias) → `--mark` | `Stop` → `--stop-claude` |
+
+What fires:
+
+1. After a shell/tool completion that looks like `git merge`, `gh pr merge`, `sendit`, `inventory:journey` / `inventory:sync`, ffmpeg / OBS / Blender / Remotion export, or a capture/screenshot / `.mp4|.webm|.mov|.png|.gif` path, the hook writes `.poppy/preserve-pending.json` in the **consumer project**.
+2. When the agent **Stop**s, the gate re-checks that flag plus git porcelain, recent files under `captures` / `journeys` / `exports` / `Recordings` / `inventory` / `content-pipeline`, and untagged `inventory/clips.json` stubs.
+3. If a signal exists, the agent is told to run `/poppy-preserve-content` (then tag if yes). If not, the hook stays silent.
+4. Loop guards: Cursor `loop_count` / `loop_limit: 1`; Claude/Codex `stop_hook_active`. The pending flag is marked `consumedAt` when a followup is emitted.
+
+**PR-merge is not a native hook event.** Hosts do not fire “GitHub PR merged.” We approximate it: the mark step watches merge/sendit **shell** commands, then Stop asks the preserve question. There is no GitHub merge bot and no remote tagging job.
+
+### Trust
+
+Hooks run local Node (`scripts/preserve-gate.mjs`). They do not send network requests or read secrets.
+
+- **Claude Code / Codex:** type `/hooks` to inspect plugin hooks. Codex **requires a trust review** — plugin-bundled hooks stay skipped until you accept the current definition.
+- **Cursor:** Settings → **Hooks** tab. Installed plugins expand `${CURSOR_PLUGIN_ROOT}`. If that env var is missing, the script falls back to `CLAUDE_PLUGIN_ROOT`, `PLUGIN_ROOT`, then the parent of `scripts/` via `import.meta.url`.
+
+### Disable
+
+Turn the plugin off, leave Codex hooks untrusted, set Claude `"disableAllHooks": true`, or drop the `hooks` field from the host manifest. The copy-paste fallback remains [`docs/hooks/post-work-tag-clips.md`](./hooks/post-work-tag-clips.md) when hooks cannot load.
+
+Details: [`hooks/README.md`](../hooks/README.md).

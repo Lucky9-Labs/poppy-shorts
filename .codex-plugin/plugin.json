@@ -1,15 +1,15 @@
 {
   "name": "poppy-shorts",
   "version": "0.2.1",
-  "description": "Journey proof, post-ship preserve prompt, clip inventory tagging, and Stop-hook preserve gate for Shorts.",
+  "description": "Journey proof, post-ship preserve prompt, clip tagging, and a Stop-hook preserve gate for Shorts.",
   "author": {
     "name": "Lucky9 Labs"
   },
   "homepage": "https://github.com/Lucky9-Labs/poppy-shorts",
   "repository": "https://github.com/Lucky9-Labs/poppy-shorts",
   "license": "MIT",
-  "keywords": ["poppy-shorts", "remotion", "shorts", "inventory", "journey"],
+  "keywords": ["poppy-shorts", "remotion", "shorts", "inventory", "journey", "hooks"],
   "skills": "./skills",
   "commands": "./commands",
-  "hooks": "./hooks/cursor-hooks.json"
+  "hooks": "./hooks/hooks.json"
 }

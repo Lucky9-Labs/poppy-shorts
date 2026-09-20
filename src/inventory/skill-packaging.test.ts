@@ -95,34 +95,89 @@ describe("poppy-shorts plugin packaging", () => {
     expect(install).toContain("inventory:sync");
     expect(install).toContain("inventory:tag");
     expect(install).toMatch(/--prefix/i);
+    expect(install).toContain("preserve-gate.mjs");
+    expect(install).toMatch(/\/hooks/i);
+    expect(install).toMatch(/PR-merge is not a native hook event/i);
+    expect(install).toMatch(/trust review/i);
     expect(readRepoFile("docs/INSTALL-SKILL.md")).toContain("INSTALL-PLUGIN.md");
     expect(readRepoFile("README.md")).toContain("docs/INSTALL-PLUGIN.md");
     expect(readRepoFile("README.md")).toMatch(/show the journey/i);
+    expect(readRepoFile("hooks/README.md")).toContain("preserve-gate.mjs");
+    expect(readRepoFile("hooks/README.md")).toMatch(/loop_limit/i);
   });
 
   it("exposes plugin manifests that wrap the skill folder", () => {
     const agent = JSON.parse(readRepoFile("plugin.json")) as {
       name: string;
+      version?: string;
       $schema?: string;
       description: string;
     };
     const cursor = JSON.parse(readRepoFile(".cursor-plugin/plugin.json")) as {
       name: string;
+      version?: string;
       skills?: string;
+      commands?: string;
+      hooks?: string;
+    };
+    const claude = JSON.parse(readRepoFile(".claude-plugin/plugin.json")) as {
+      name: string;
+      version?: string;
+      skills?: string;
+      commands?: string;
+      hooks?: string;
+    };
+    const codex = JSON.parse(readRepoFile(".codex-plugin/plugin.json")) as {
+      name: string;
+      version?: string;
+      skills?: string;
+      commands?: string;
+      hooks?: string;
     };
     const market = JSON.parse(
       readRepoFile(".cursor-plugin/marketplace.json"),
     ) as {
-      plugins: Array<{name: string; source: string; description: string}>;
+      plugins: Array<{
+        name: string;
+        version?: string;
+        source: string;
+        description: string;
+      }>;
+    };
+    const npmPackage = JSON.parse(readRepoFile("package.json")) as {
+      name: string;
+      version?: string;
     };
 
     expect(agent.name).toBe("poppy-shorts");
     expect(agent.$schema).toContain("agent-plugins.org");
     expect(agent.description.toLowerCase()).toContain("journey");
+    expect(agent.version).toBe("0.2.1");
     expect(cursor.name).toBe("poppy-shorts");
+    expect(cursor.version).toBe("0.2.1");
     expect(cursor.skills).toBe("./skills");
+    expect(cursor.commands).toBe("./commands");
+    expect(cursor.hooks).toBe("./hooks/cursor-hooks.json");
+    expect(claude.name).toBe("poppy-shorts");
+    expect(claude.version).toBe("0.2.1");
+    expect(claude.skills).toBe("./skills");
+    expect(claude.commands).toBe("./commands");
+    expect(claude.hooks).toBe("./hooks/hooks.json");
+    expect(codex.name).toBe("poppy-shorts");
+    expect(codex.version).toBe("0.2.1");
+    expect(codex.hooks).toBe("./hooks/hooks.json");
+    expect(npmPackage.name).toBe("poppy-shorts");
+    expect(npmPackage.version).toBe("0.2.1");
     expect(market.plugins[0]?.source).toBe(".");
+    expect(market.plugins[0]?.version).toBe("0.2.1");
     expect(market.plugins[0]?.description).toContain("poppy-journey");
+    expect(readRepoFile("docs/INSTALL-PLUGIN.md")).toContain("0.2.1");
+    expect(readRepoFile("docs/INSTALL-PLUGIN.md")).toMatch(/patch.*default/i);
+    expect(readRepoFile("README.md")).toContain("0.2.1");
+    expect(readRepoFile("README.md")).toMatch(/patch.*default/i);
+    expect(readRepoFile("hooks/hooks.json")).toContain("--stop-claude");
+    expect(readRepoFile("hooks/cursor-hooks.json")).toContain("--stop-cursor");
+    expect(readRepoFile("scripts/preserve-gate.mjs")).toContain("--mark");
   });
 
   it("exposes every plugin skill via project skill directories", () => {
