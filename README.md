@@ -19,6 +19,7 @@ The example Short renders from generated color plates. You do not need gameplay 
 | `sfx/` | License notes + empty whoosh / impact / comedy folders. |
 | `public/footage/` | Drop cleared clips/stills (no private assets). |
 | `contentSources` | Dynamic list of `s3://bucket/prefix/` folders to catalog. |
+| `src/story/` | Ingest → transcribe → select → optional Fish VO → Remotion assemble. |
 
 A beat is one hard cut: a plate (placeholder / image / video), an optional caption, and optional SFX cues with timestamps.
 
@@ -43,6 +44,7 @@ Node 20+ is required. First render downloads a headless browser if needed.
 | `npm run render:example` | Render the Hullscape `ExampleShort` to `out/example.mp4` |
 | `npm test` | Timeline / schema / SFX unit tests |
 | `npm run catalog` | List S3 prefixes → `public/content-catalog.json` |
+| `npm run story` | Offline storytelling dry-run → `public/story-short.json` |
 | `npm run lint` | ESLint + `tsc` |
 
 ## How to add a Short
@@ -103,6 +105,28 @@ npm run catalog -- --presign s3://your-bucket/gameplay/
 
 Do not import `src/lib/s3-client.ts` from Remotion compositions (AWS SDK / Node only). Compositions consume the catalog; the prep script lists S3.
 
+## Storytelling (auto-story over time)
+
+v0 is a **pluggable pipeline**, not a Restart clone. Adapters live in `src/story/`. Full sketch: [`docs/STORYTELLING.md`](./docs/STORYTELLING.md).
+
+```
+ingest (S3 prefixes) → transcribe (Whisper/offline) → select beats
+        → optional Fish Audio TTS (voice.referenceId) → PoppyShort
+```
+
+```ts
+{
+  contentSources: ["s3://bucket/gameplay/", "s3://bucket/wip-evidence/"],
+  voice: {provider: "fish_audio", referenceId: "your-clone-id"},
+  transcribe: {provider: "offline"},
+  narration: "We forged a mech. In a group chat named oops.",
+}
+```
+
+`voice.provider` is `fish_audio` or `offline`. The Fish adapter calls the [public TTS API](https://docs.fish.audio) (`POST /v1/tts` + `reference_id`). Keys stay in `FISH_AUDIO_API_KEY` — never in git. Without AWS or Fish, `npm run story` still writes a placeholder Short plan; `ExampleShort` still renders.
+
+That is how Hullscape (and later other channels) can move from hand-authored beats to “drop a week of captures in S3 + a voice id → cut a Short,” while this repo stays MIT and secret-free.
+
 ### AWS auth (no secrets in this repo)
 
 The prep script uses the **AWS default credential chain**:
@@ -137,17 +161,19 @@ Use this repo when the job is **“cut and post a Hullscape Short”**, not when
 7. If you only have stills, use `type: "image"`. If you have a clip, `type: "video"` with `object-fit: cover`.
 8. Caption copy: first three words are the hook. All-caps for serious; the goofy line can stay conversational.
 
-Lucky9 Labs agents should treat `poppy-shorts` as the shared render library and Hullscape as the first channel that calls it.
+Lucky9 Labs agents should treat `poppy-shorts` as the shared render library and Hullscape as the first channel that calls it. Do **not** copy Restart (or other product) voice/Whisper files into this repo — implement `VoiceProvider` / `Transcriber` adapters here instead. See [`docs/STORYTELLING.md`](./docs/STORYTELLING.md).
 
 ## Project layout
 
 ```
 src/lib/           timeline, schema, SFX matching, S3 catalog, metadata
-src/scripts/       `prep-content` — list S3 prefixes (Node / AWS SDK)
-src/components/    smash flash, caption pop, beat media, SFX slots
+src/story/         ingest / transcribe / select / Fish VO / assemble
+src/scripts/       `prep-content`, `run-story`
+src/components/    smash flash, caption pop, beat media, SFX + VO slots
 src/compositions/  PoppyShort (prop-driven)
 src/shorts/        example beat list (Hullscape)
 src/Root.tsx       composition registry
+docs/STORYTELLING.md
 sfx/               SFX kit + licensing (no binaries)
 public/footage/    optional cleared clips
 ```

@@ -13,6 +13,8 @@ out/
 
 # Local S3 catalog may include presigned URLs — do not commit
 public/content-catalog.json
+public/story-short.json
+public/voiceover/
 
 # OS / editor
 .DS_Store

@@ -19,6 +19,7 @@
     "render:example": "remotion render ExampleShort out/example.mp4",
     "still:example": "remotion still ExampleShort out/example-preview.png --frame=36",
     "catalog": "tsx src/scripts/prep-content.ts",
+    "story": "tsx src/scripts/run-story.ts",
     "test": "vitest run",
     "lint": "eslint src && tsc"
   },

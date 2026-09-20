@@ -69,6 +69,8 @@ describe("exampleShortProps", () => {
     expect(seconds).toBeGreaterThan(4);
     expect(seconds).toBeLessThanOrEqual(YOUTUBE_SHORT_MAX_SECONDS);
     expect(parsed.contentSources).toEqual([]);
+    expect(parsed.voice).toBeUndefined();
+    expect(parsed.voiceover).toBeUndefined();
   });
 
   it("demonstrates smash-cut juxtaposition plus SFX slots", () => {

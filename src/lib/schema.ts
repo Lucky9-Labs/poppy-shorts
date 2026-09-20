@@ -1,4 +1,5 @@
 import {z} from "zod";
+import {VoiceConfigSchema} from "../story/config";
 
 /**
  * Zod schemas for a prop-driven poppy-shorts composition.
@@ -82,12 +83,20 @@ export const ContentCatalogSchema = z.object({
   items: z.array(CatalogItemSchema),
 });
 
+/** Optional Fish Audio / offline VO knobs (no API keys). */
+export const VoiceoverTrackSchema = z.object({
+  src: z.string().min(1),
+  volume: z.number().min(0).max(1).optional(),
+});
+
 /** Top-level props for the reusable PoppyShort composition. */
 export const ShortPropsSchema = z.object({
   title: z.string().min(1),
   beats: z.array(BeatSchema).min(1),
   contentSources: z.array(z.string()).default([]),
   catalog: ContentCatalogSchema.optional(),
+  voice: VoiceConfigSchema.optional(),
+  voiceover: VoiceoverTrackSchema.optional(),
 });
 
 export type BeatSource = z.infer<typeof BeatSourceSchema>;
@@ -95,6 +104,7 @@ export type CatalogBeatSource = z.infer<typeof CatalogBeatSourceSchema>;
 export type Caption = z.infer<typeof CaptionSchema>;
 export type SfxCue = z.infer<typeof SfxCueSchema>;
 export type Beat = z.infer<typeof BeatSchema>;
+export type VoiceoverTrack = z.infer<typeof VoiceoverTrackSchema>;
 export type ShortProps = z.infer<typeof ShortPropsSchema>;
 
 /** Parses and validates Short props. Throws a ZodError on invalid input. */

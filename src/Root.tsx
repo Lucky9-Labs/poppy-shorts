@@ -25,6 +25,7 @@ export const RemotionRoot: React.FC = () => {
           defaultProps={{
             title: "New Short",
             contentSources: [],
+            voice: {provider: "offline"},
             beats: [
               {
                 id: "hook",
