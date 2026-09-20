@@ -11,16 +11,17 @@
 
 import {mkdir, writeFile} from "node:fs/promises";
 import path from "node:path";
-import {contentSourcesFromEnv, parseContentSourcesInput} from "../lib/content-sources";
+import {parseContentSourcesInput} from "../lib/content-sources";
 import {listContentSources} from "../lib/list-s3-content";
 import {attachPresignedUrls, createS3ListClient} from "../lib/s3-client";
+import {loadProjectConfig, resolveAwsRegion, resolveContentSources} from "../lib/project-config";
 
 const OUTPUT = path.join(process.cwd(), "public", "content-catalog.json");
 
 async function main(): Promise<void> {
   const {sources, presign} = parseArgs(process.argv.slice(2));
-  const contentSources =
-    sources.length > 0 ? sources : contentSourcesFromEnv();
+  const projectConfig = await loadProjectConfig();
+  const contentSources = sources.length > 0 ? sources : resolveContentSources(projectConfig);
 
   if (contentSources.length === 0) {
     console.log(
@@ -31,7 +32,7 @@ async function main(): Promise<void> {
   }
 
   const catalog = await listContentSources(
-    createS3ListClient(process.env.AWS_REGION),
+    createS3ListClient(resolveAwsRegion(projectConfig)),
     contentSources,
   );
   if (presign) {
