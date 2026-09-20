@@ -2,7 +2,7 @@
  * Dry-run the storytelling pipeline.
  *
  *   npm run story
- *   npm run story -- --title "Hullscape weekly" --narration "We forged a mech."
+ *   npm run story -- --title "Weekly story" --narration "We shipped a feature."
  *
  * Without AWS / Fish credentials this writes an offline Short plan
  * (placeholders, no VO file). Never pass API keys as flags.
@@ -11,7 +11,7 @@
 import {writeFile} from "node:fs/promises";
 import path from "node:path";
 import {loadInventory} from "../inventory/persist";
-import {contentSourcesFromEnv} from "../lib/content-sources";
+import {resolveContentSources, loadProjectConfig} from "../lib/project-config";
 import {parseStoryConfig, storyConfigFromEnv} from "../story/config";
 import {runStoryPipeline} from "../story/pipeline";
 
@@ -19,11 +19,12 @@ const OUTPUT = path.join(process.cwd(), "public", "story-short.json");
 
 async function main(): Promise<void> {
   const flags = parseFlags(process.argv.slice(2));
+  const projectConfig = await loadProjectConfig();
   const envVoice = storyConfigFromEnv();
   const config = parseStoryConfig({
-    title: flags.title ?? "Hullscape offline story",
-    channel: flags.channel ?? "Hullscape",
-    contentSources: flags.sources.length > 0 ? flags.sources : contentSourcesFromEnv(),
+    title: flags.title ?? `${projectConfig.channel ?? "Project"} offline story`,
+    channel: flags.channel ?? projectConfig.channel,
+    contentSources: flags.sources.length > 0 ? flags.sources : resolveContentSources(projectConfig),
     narration:
       flags.narration ??
       "We forged a mech. In a group chat named oops. Boss fight energy.",

@@ -10,6 +10,20 @@ finish a feature → /poppy-journey (visual proof) → /poppy-preserve-content? 
 
 Inventory CLIs stay in this repo (`inventory:sync`, `inventory:journey`, `inventory:tag`). The skills tell an agent when and how to call them. Nothing waits on a remote merge job.
 
+## Connect a consumer project
+
+After installing the plugin, the consumer project owns its channel and media connection. Create `.poppy/config.json` in that project:
+
+```json
+{
+  "channel": "My Channel",
+  "awsRegion": "us-east-1",
+  "contentSources": ["s3://my-bucket/gameplay/", "s3://my-bucket/proof/"]
+}
+```
+
+The package reads this file for catalog, inventory, and story commands. `CONTENT_SOURCES` and `AWS_REGION` remain supported as environment overrides. The config contains no secrets; credentials still come from the AWS default credential chain.
+
 ## What you are installing
 
 | Path | Role |
@@ -86,7 +100,7 @@ npm run --prefix ../poppy-shorts inventory:sync -- s3://your-bucket/wip-evidence
 npm run --prefix ../poppy-shorts inventory:tag -- <id> --richness 5 --engagement 4 --tags hangar --notes "..."
 ```
 
-If poppy-shorts is a `github:` or `file:` dependency, run the same scripts via `--prefix node_modules/poppy-shorts` from the directory that should own `inventory/clips.json`. This package is `private: true` — prefer a clone over the public npm registry.
+If poppy-shorts is a `github:` or `file:` dependency, run the same scripts via `--prefix node_modules/poppy-shorts` from the consumer directory. The consumer's `.poppy/config.json` is discovered from the current working directory, so the connection stays project-owned.
 
 ## After a feature finishes (Cursor / Codex)
 

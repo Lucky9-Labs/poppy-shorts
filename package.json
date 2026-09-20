@@ -1,7 +1,7 @@
 {
   "name": "poppy-shorts",
   "version": "0.2.1",
-  "description": "Open-source Remotion Shorts pipeline (smash cuts, caption pops, SFX slots) for Hullscape and other Lucky9 Labs channels.",
+  "description": "Open-source, project-configurable Remotion Shorts pipeline (smash cuts, caption pops, and SFX slots).",
   "repository": {
     "type": "git",
     "url": "https://github.com/Lucky9-Labs/poppy-shorts.git"
