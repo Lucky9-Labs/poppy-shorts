@@ -1,0 +1,14 @@
+{
+  "name": "poppy-shorts",
+  "version": "0.1.0",
+  "description": "Tag poppy-shorts clip inventory after captures, GIFs, and video exports.",
+  "author": {
+    "name": "Lucky9 Labs"
+  },
+  "homepage": "https://github.com/Lucky9-Labs/poppy-shorts",
+  "repository": "https://github.com/Lucky9-Labs/poppy-shorts",
+  "license": "MIT",
+  "keywords": ["poppy-shorts", "remotion", "shorts", "inventory", "tagging"],
+  "skills": "./skills",
+  "commands": "./commands"
+}

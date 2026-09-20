@@ -1,6 +1,6 @@
-# Post-work hook: tag new captures in poppy-shorts inventory
+# Session-end fallback: tag new captures
 
-Provider-agnostic. Copy this prompt into a Codex automation, Cursor rule, or any agent “session end” routine. Do not embed API keys.
+Prefer the installable **`tag-poppy-clips`** skill ([`docs/INSTALL-SKILL.md`](../INSTALL-SKILL.md)). Use this prompt only when the agent cannot load skills. Do not embed API keys.
 
 ## When to run
 
@@ -9,7 +9,7 @@ After a session that **created, exported, uploaded, or moved** gameplay, WIP evi
 ## Prompt (copy)
 
 ```
-You just finished work that may have produced new visual clips.
+You just finished work that may have produced new visual clips. Follow skills/tag-poppy-clips/SKILL.md if it is installed; otherwise:
 
 1. List any new or changed media paths from this session (local exports and intended s3://bucket/prefix/key destinations).
 2. Run `npm run inventory:sync` with the relevant s3:// prefixes (or CONTENT_SOURCES). Do not wipe inventory/clips.json tags.

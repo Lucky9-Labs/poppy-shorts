@@ -1,0 +1,14 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "poppy-shorts",
+  "version": "0.1.0",
+  "description": "Tag poppy-shorts clip inventory after captures, GIFs, and video exports. Sync stubs and prompt for nature plus richness/engagement scores.",
+  "author": {
+    "name": "Lucky9 Labs",
+    "url": "https://github.com/Lucky9-Labs/poppy-shorts"
+  },
+  "homepage": "https://github.com/Lucky9-Labs/poppy-shorts",
+  "repository": "https://github.com/Lucky9-Labs/poppy-shorts",
+  "license": "MIT",
+  "keywords": ["poppy-shorts", "remotion", "shorts", "inventory", "tagging"]
+}

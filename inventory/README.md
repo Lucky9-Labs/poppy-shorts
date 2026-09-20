@@ -9,4 +9,4 @@ npm run inventory:sync -- s3://your-bucket/gameplay/ s3://your-bucket/wip-eviden
 npm run inventory:tag -- <id> --richness 5 --engagement 4 --tags mech-flex,horror --notes "cold-open lighting"
 ```
 
-See [`docs/INVENTORY.md`](../docs/INVENTORY.md) and the post-work hook [`docs/hooks/post-work-tag-clips.md`](../docs/hooks/post-work-tag-clips.md).
+See [`docs/INVENTORY.md`](../docs/INVENTORY.md). After a session that exported captures, invoke the **`tag-poppy-clips`** skill ([`docs/INSTALL-SKILL.md`](../docs/INSTALL-SKILL.md)).

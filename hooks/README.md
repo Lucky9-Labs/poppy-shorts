@@ -1,9 +1,10 @@
-# Agent hooks
+# Agent session-end fallback
 
-Templates you can copy into Codex automations or Cursor routines. They are markdown on purpose — not bound to one vendor.
+The supported tagging path is the installable **`tag-poppy-clips`** skill, not a vendor automation.
 
-| Hook | Use |
+| Path | Use |
 | --- | --- |
-| [Post-work clip tagging](../docs/hooks/post-work-tag-clips.md) | After a feature/session, prompt the operator to tag new captures in `inventory/clips.json` |
+| [`skills/tag-poppy-clips/SKILL.md`](../skills/tag-poppy-clips/SKILL.md) | Install this (copy folder or Cursor plugin). See [`docs/INSTALL-SKILL.md`](../docs/INSTALL-SKILL.md). |
+| [Session-end prompt](../docs/hooks/post-work-tag-clips.md) | Fallback if the agent cannot load skills. Copy the prompt into a Codex / Cursor session-end instruction. |
 
-Keep secrets out of hooks. Call `npm run inventory:sync` and `npm run inventory:tag` instead of pasting AWS or Fish keys.
+Keep secrets out of prompts. Call `npm run inventory:sync` and `npm run inventory:tag` instead of pasting AWS or Fish keys.

@@ -62,10 +62,11 @@ Untagged clips score `0`, so a 5/5 mech-flex beat is chosen before muddy untagge
 
 ## How agents tag
 
+- Install and run the **`tag-poppy-clips`** skill. Copy `skills/tag-poppy-clips` into the consumer repo, or install the thin Cursor plugin from this GitHub URL. See [`docs/INSTALL-SKILL.md`](./INSTALL-SKILL.md).
 - Do not invent scores you have not seen. If you cannot open the media, leave scores empty and set `notes` to what the filename / prefix suggests (`wip`, `hangar`, …).
 - Prefer `npm run inventory:tag` over hand-editing JSON so `taggedAt` is set.
-- After a coding session that produced new captures or exports, run the [post-work hook](./hooks/post-work-tag-clips.md) and stop for the operator to confirm scores.
+- After a coding session that produced new captures or exports, invoke `/tag-poppy-clips` (or ask the agent to run that skill) and stop for the operator to confirm scores.
 
-## Post-work hook
+## After work finishes
 
-Copy [`docs/hooks/post-work-tag-clips.md`](./hooks/post-work-tag-clips.md) into Codex automations or Cursor routines. It is provider-agnostic: prompt the human to tag new paths, then call `inventory:sync` + `inventory:tag`.
+Cursor / Codex projects should invoke the installed skill, not a merge bot. The skill syncs stubs, prompts the human, then calls `inventory:sync` + `inventory:tag`. A copy-paste fallback prompt lives at [`docs/hooks/post-work-tag-clips.md`](./hooks/post-work-tag-clips.md) if the agent cannot load skills.
