@@ -1,4 +1,4 @@
-import {readFile} from "node:fs/promises";
+import {mkdir, readFile, writeFile} from "node:fs/promises";
 import path from "node:path";
 import {z} from "zod";
 import {parseContentSourcesInput} from "./content-sources";
@@ -8,9 +8,52 @@ const ProjectConfigSchema = z.object({
   channel: z.string().min(1).optional(),
   contentSources: z.array(z.string()).optional(),
   awsRegion: z.string().min(1).optional(),
+  localContentDir: z.string().min(1).default("content"),
+  journeyDir: z.string().min(1).default("journeys"),
 });
 
-export type ProjectConfig = z.infer<typeof ProjectConfigSchema>;
+// Input stays permissive so callers can provide only the settings they own;
+// parsed configs receive the local defaults from the schema.
+export type ProjectConfig = z.input<typeof ProjectConfigSchema>;
+
+export type ProjectSetup = {
+  root: string;
+  configPath: string;
+  config: ProjectConfig;
+  created: string[];
+};
+
+/**
+ * Make a consumer repo usable without requiring prior Poppy knowledge.
+ * This never invents a cloud destination: callers must provide one explicitly.
+ */
+export async function initializeProject(
+  cwd = process.cwd(),
+  options: Pick<ProjectConfig, "channel" | "awsRegion" | "contentSources"> = {},
+): Promise<ProjectSetup> {
+  const root = path.resolve(cwd);
+  const configPath = path.join(root, ".poppy", "config.json");
+  const existing = await loadProjectConfig(root);
+  const config: ProjectConfig = {
+    ...existing,
+    ...options,
+    localContentDir: existing.localContentDir ?? "content",
+    journeyDir: existing.journeyDir ?? "journeys",
+  };
+  const created: string[] = [];
+  for (const relative of [
+    ".poppy",
+    config.localContentDir ?? "content",
+    config.journeyDir ?? "journeys",
+    "inventory",
+  ]) {
+    const directory = path.resolve(root, relative);
+    await mkdir(directory, {recursive: true});
+    created.push(path.relative(root, directory) || ".");
+  }
+  await writeFile(configPath, `${JSON.stringify(config, null, 2)}\n`, {flag: "w"});
+  return {root, configPath, config, created};
+}
 
 /**
  * Read the consumer project's optional config. The package stays useful when

@@ -2,7 +2,7 @@ import {mkdtemp, writeFile} from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import {describe, expect, it} from "vitest";
-import {loadProjectConfig, resolveContentSources} from "./project-config";
+import {initializeProject, loadProjectConfig, resolveContentSources} from "./project-config";
 
 describe("project config", () => {
   it("loads consumer-owned connection settings", async () => {
@@ -24,5 +24,17 @@ describe("project config", () => {
         {CONTENT_SOURCES: "s3://env/override"},
       ),
     ).toEqual(["s3://env/override/"]);
+  });
+
+  it("initializes safe local defaults without inventing cloud storage", async () => {
+    const cwd = await mkdtemp(path.join(os.tmpdir(), "poppy-init-"));
+    const setup = await initializeProject(cwd);
+    expect(setup.config.contentSources).toBeUndefined();
+    expect(setup.configPath).toBe(path.join(cwd, ".poppy", "config.json"));
+    expect(setup.created).toEqual([".poppy", "content", "journeys", "inventory"]);
+    expect(await loadProjectConfig(cwd)).toMatchObject({
+      localContentDir: "content",
+      journeyDir: "journeys",
+    });
   });
 });
