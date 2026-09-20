@@ -43,6 +43,7 @@ jobs:
         if: steps.intent.outputs.skip != 'true'
         env:
           BUMP: ${{ steps.intent.outputs.bump }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           version=$(node scripts/release-version.mjs "$BUMP")
@@ -58,5 +59,3 @@ jobs:
           git add .changeset
           git commit -m "chore: consume release intent" || true
           git push origin main
-        env:
-          GH_TOKEN: ${{ github.token }}
