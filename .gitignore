@@ -1,0 +1,40 @@
+# Dependencies
+node_modules/
+
+# Remotion / bundler output
+dist/
+out/
+.remotion/
+
+# Environment and secrets — never commit tokens or private asset keys
+.env
+.env.*
+!.env.example
+
+# Local S3 catalog may include presigned URLs — do not commit
+public/content-catalog.json
+public/story-short.json
+public/voiceover/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.log
+.idea/
+.vscode/
+
+# Tests
+coverage/
+
+# Local licensed SFX and dropped footage (keep folder placeholders)
+sfx/**/*.wav
+sfx/**/*.mp3
+sfx/**/*.ogg
+sfx/**/*.aiff
+sfx/**/*.flac
+sfx/**/*.m4a
+public/footage/**/*.*
+!public/footage/.gitkeep
+!public/footage/README.md
+!sfx/**/.gitkeep
+!sfx/README.md

@@ -1,0 +1,54 @@
+{
+  "name": "poppy-shorts",
+  "version": "0.1.0",
+  "description": "Open-source Remotion Shorts pipeline (smash cuts, caption pops, SFX slots) for Hullscape and other Lucky9 Labs channels.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Lucky9-Labs/poppy-shorts.git"
+  },
+  "homepage": "https://github.com/Lucky9-Labs/poppy-shorts",
+  "bugs": {
+    "url": "https://github.com/Lucky9-Labs/poppy-shorts/issues"
+  },
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "studio": "remotion studio",
+    "dev": "remotion studio",
+    "render": "remotion render PoppyShort",
+    "render:example": "remotion render ExampleShort out/example.mp4",
+    "still:example": "remotion still ExampleShort out/example-preview.png --frame=36",
+    "catalog": "tsx src/scripts/prep-content.ts",
+    "story": "tsx src/scripts/run-story.ts",
+    "inventory:sync": "tsx src/scripts/inventory-sync.ts",
+    "inventory:tag": "tsx src/scripts/inventory-tag.ts",
+    "inventory:journey": "tsx src/scripts/inventory-journey.ts",
+    "test": "vitest run",
+    "lint": "eslint src && tsc"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.899.0",
+    "@aws-sdk/s3-request-presigner": "^3.899.0",
+    "@remotion/cli": "4.0.526",
+    "@remotion/google-fonts": "4.0.526",
+    "@remotion/zod-types": "4.0.526",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "remotion": "4.0.526",
+    "zod": "4.5.4"
+  },
+  "devDependencies": {
+    "@remotion/eslint-config-flat": "4.0.526",
+    "@types/node": "^24.5.2",
+    "@types/react": "19.2.7",
+    "@types/web": "0.0.166",
+    "eslint": "9.19.0",
+    "prettier": "3.8.1",
+    "tsx": "^4.20.5",
+    "typescript": "5.9.3",
+    "vitest": "^3.2.4"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

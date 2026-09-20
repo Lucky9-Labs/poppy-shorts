@@ -1,0 +1,16 @@
+{
+  "name": "poppy-shorts",
+  "owner": {
+    "name": "Lucky9 Labs"
+  },
+  "metadata": {
+    "description": "Installable Cursor plugin for the poppy-shorts content-capture loop."
+  },
+  "plugins": [
+    {
+      "name": "poppy-shorts",
+      "source": ".",
+      "description": "poppy-journey, poppy-preserve-content, and tag-poppy-clips plus inventory CLIs"
+    }
+  ]
+}

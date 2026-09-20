@@ -1,0 +1,14 @@
+{
+  "name": "poppy-shorts",
+  "version": "0.2.0",
+  "description": "Journey proof, post-ship preserve prompt, and clip inventory tagging for Shorts.",
+  "author": {
+    "name": "Lucky9 Labs"
+  },
+  "homepage": "https://github.com/Lucky9-Labs/poppy-shorts",
+  "repository": "https://github.com/Lucky9-Labs/poppy-shorts",
+  "license": "MIT",
+  "keywords": ["poppy-shorts", "remotion", "shorts", "inventory", "journey"],
+  "skills": "./skills",
+  "commands": "./commands"
+}
